@@ -1,0 +1,43 @@
+{
+    "name": "daniel-jorg-schuppelius/orgamax-php-sdk",
+    "description": "orgaMAX SDK for PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Joerg Schuppelius",
+            "email": "info@schuppelius.org"
+        }
+    ],
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2 <8.5",
+        "daniel-jorg-schuppelius/php-api-toolkit": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Orgamax\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.3",
+        "laravel/pint": "^1.27",
+        "phpstan/phpstan": "^2.1"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "format": "vendor/bin/pint --test",
+        "format:fix": "vendor/bin/pint",
+        "lint": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "qa": [
+            "@format",
+            "@lint",
+            "@test"
+        ]
+    }
+}

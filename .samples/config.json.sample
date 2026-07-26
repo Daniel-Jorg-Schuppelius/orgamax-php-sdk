@@ -1,0 +1,39 @@
+{
+    "ORGAMAX-API": [
+        {
+            "key": "resourceurl",
+            "value": "https://api.orgamax.de",
+            "type": "text",
+            "description": "orgaMAX API base URL",
+            "enabled": true
+        },
+        {
+            "key": "api_key",
+            "value": "your-api-key",
+            "type": "text",
+            "description": "API-Schlüssel der Erweiterung (Marketplace > Eigene Erweiterungen)",
+            "enabled": true
+        },
+        {
+            "key": "api_secret",
+            "value": "your-api-secret",
+            "type": "secret",
+            "description": "Geheimer API-Schlüssel der Erweiterung",
+            "enabled": true
+        },
+        {
+            "key": "ownership_id",
+            "value": "your-ownership-id",
+            "type": "text",
+            "description": "ownershipId aus der Callback-URL (Query-Parameter iid)",
+            "enabled": true
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "secret",
+            "description": "Optional: bereits bezogenes Bearer-Token (überspringt den Auth-Flow)",
+            "enabled": true
+        }
+    ]
+}

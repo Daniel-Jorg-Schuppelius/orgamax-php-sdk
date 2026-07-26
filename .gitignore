@@ -427,3 +427,18 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Schuppe
+/.samples/config.json
+
+# PHPStan tmpDir (Cache, nicht committen)
+/var/phpstan
+
+# Composer
+composer.phar
+/vendor/
+
+# phpunit/phpunit
+phpunit.xml
+/.phpunit.cache
+/.phpunit.result.cache
