@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Tests\Contracts;
 
+use APIToolkit\Testing\MockApiClient;
 use ERRORToolkit\Factories\ConsoleLoggerFactory;
 use ERRORToolkit\LoggerRegistry;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Tests\Mocks\MockApiClient;
 
 abstract class OfflineEndpointTest extends TestCase {
     protected ?LoggerInterface $logger = null;

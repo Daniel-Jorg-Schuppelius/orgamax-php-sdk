@@ -12,24 +12,17 @@ declare(strict_types=1);
 
 namespace Orgamax\Contracts\Abstracts\API;
 
-use APIToolkit\API\Pagination\OffsetPaginator;
-use APIToolkit\Contracts\Abstracts\API\EndpointAbstract;
-use Generator;
+use APIToolkit\Contracts\Abstracts\API\PagedEndpointAbstract as APIToolkitPagedEndpointAbstract;
 use Orgamax\Contracts\Abstracts\ListResponseAbstract;
 
 /**
  * Basis für Endpoints mit limit/offset-Suche.
  *
  * Die orgaMAX-API begrenzt Listen serverseitig (Default 100, Maximum 250) und
- * meldet die Gesamtzahl im meta-Block. searchAll() läuft die Seiten über den
- * {@see OffsetPaginator} des api-toolkits durch, sodass Aufrufer weder Offset
- * noch Abbruchbedingung selbst führen müssen.
+ * meldet die Gesamtzahl im meta-Block; searchAll() kommt aus dem api-toolkit.
  */
-abstract class PagedEndpointAbstract extends EndpointAbstract {
-    /** Serverseitiges Maximum je Anfrage. */
-    public const MAX_LIMIT = 250;
-
-    public const DEFAULT_LIMIT = 100;
+abstract class PagedEndpointAbstract extends APIToolkitPagedEndpointAbstract {
+    public const MAX_PAGE_SIZE = 250;
 
     /**
      * @param array<string, mixed> $queryParams
@@ -38,26 +31,18 @@ abstract class PagedEndpointAbstract extends EndpointAbstract {
     abstract public function search(array $queryParams = [], array $options = []): ?ListResponseAbstract;
 
     /**
-     * Iteriert alle Treffer einer Suche über sämtliche Seiten hinweg.
-     *
-     * @param array<string, mixed> $queryParams Suchparameter ohne limit/offset
-     * @param array<string, mixed> $options
-     * @param int|null $maxPages Obergrenze für die Zahl geladener Seiten
-     * @return Generator<int, mixed>
+     * @return array<string, mixed>
      */
-    public function searchAll(array $queryParams = [], int $limit = self::DEFAULT_LIMIT, array $options = [], ?int $maxPages = null): Generator {
-        $limit = max(1, min($limit, self::MAX_LIMIT));
+    protected function pageQueryParams(int $page, int $pageSize): array {
+        return ['limit' => $pageSize, 'offset' => $page * $pageSize];
+    }
 
-        $paginator = new OffsetPaginator(
-            fn (int $page): array => $this->search(
-                array_merge($queryParams, ['limit' => $limit, 'offset' => $page * $limit]),
-                $options
-            )?->getValues() ?? [],
-            $limit,
-            0,
-            $maxPages
-        );
-
-        yield from $paginator;
+    /**
+     * @param array<string, mixed> $queryParams
+     * @param array<string, mixed> $options
+     * @return array<int, mixed>
+     */
+    protected function pageItems(array $queryParams, array $options): array {
+        return $this->search($queryParams, $options)?->getValues() ?? [];
     }
 }
