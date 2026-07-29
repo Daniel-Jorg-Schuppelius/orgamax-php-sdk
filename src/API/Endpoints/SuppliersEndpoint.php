@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Orgamax\API\Endpoints;
 
-use APIToolkit\Contracts\Abstracts\API\EndpointAbstract;
 use APIToolkit\Entities\ID;
 use InvalidArgumentException;
+use Orgamax\Contracts\Abstracts\API\PagedEndpointAbstract;
 use Orgamax\Contracts\Interfaces\API\SearchableEndpointInterface;
 use Orgamax\Entities\Suppliers\{Supplier, SupplierList, SupplierResponse};
 
-class SuppliersEndpoint extends EndpointAbstract implements SearchableEndpointInterface {
+class SuppliersEndpoint extends PagedEndpointAbstract implements SearchableEndpointInterface {
     protected string $endpoint = 'supplier';
 
     /**

@@ -14,6 +14,7 @@ namespace Orgamax\Entities\DeliveryNotes;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
 use DateTime;
+use DateTimeImmutable;
 use Orgamax\Entities\Common\{CustomerData, Positions};
 use Orgamax\Entities\Settings\DeliveryCondition;
 use Orgamax\Enums\DeliveryNoteState;
@@ -119,5 +120,26 @@ class DeliveryNote extends NamedEntity {
 
     public function getPositions(): ?Positions {
         return $this->positions ?? null;
+    }
+
+    /**
+     * Datumsfelder kommen als String ("YYYY-MM-DD" bzw. ISO-8601) von der
+     * API; die folgenden Accessoren geben sie typisiert zurück, ohne das
+     * Wire-Format der Property anzutasten.
+     */
+    protected static function toDateTime(?string $value): ?DateTimeImmutable {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    public function getDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->date ?? null);
     }
 }

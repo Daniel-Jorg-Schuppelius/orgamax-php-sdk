@@ -15,7 +15,7 @@ namespace Orgamax\API;
 use APIToolkit\API\Authentication\{BasicAuthentication, BearerAuthentication};
 use APIToolkit\Contracts\Abstracts\API\ClientAbstract;
 use GuzzleHttp\Client as HttpClient;
-use Orgamax\API\Endpoints\AuthEndpoint;
+use Orgamax\API\Authentication\OwnershipTokenAuthentication;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -85,6 +85,11 @@ class Client extends ClientAbstract {
     /**
      * Kompletter Auth-Flow: bezieht mit API-Key, API-Secret und ownershipId
      * ein Bearer-Token und liefert einen damit authentifizierten Client.
+     *
+     * Das Token läuft ab; der Client erneuert es selbst, sobald die API mit
+     * 401 antwortet (siehe {@see OwnershipTokenAuthentication}). Ein bereits
+     * vorhandenes Token kann übergeben werden, um den ersten Auth-Request zu
+     * sparen.
      */
     public static function fromCredentials(
         string $apiKey,
@@ -93,12 +98,21 @@ class Client extends ClientAbstract {
         string $baseUrl = self::DEFAULT_BASE_URL,
         ?LoggerInterface $logger = null,
         bool $sleepAfterRequest = false,
-        ?HttpClient $httpClient = null
+        ?HttpClient $httpClient = null,
+        #[\SensitiveParameter] ?string $token = null
     ): self {
-        $authClient = self::forCredentials($apiKey, $apiSecret, $baseUrl, $logger, $sleepAfterRequest, $httpClient);
-        $token = (new AuthEndpoint($authClient, $logger))->token($ownershipId);
+        $client = new self(null, $baseUrl, $logger, $sleepAfterRequest, $httpClient);
+        $client->setAuthentication(new OwnershipTokenAuthentication(
+            $apiKey,
+            $apiSecret,
+            $ownershipId,
+            $baseUrl,
+            $token,
+            $logger,
+            $httpClient
+        ));
 
-        return new self($token->getToken(), $baseUrl, $logger, $sleepAfterRequest, $httpClient);
+        return $client;
     }
 
     /**

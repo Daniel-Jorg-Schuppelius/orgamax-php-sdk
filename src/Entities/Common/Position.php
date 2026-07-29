@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Common;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -20,6 +22,8 @@ use Psr\Log\LoggerInterface;
  * wird (Vereinigung der Positions-Varianten der API).
  */
 class Position extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?string $id;
 
     protected ?string $title;
@@ -159,5 +163,41 @@ class Position extends NamedEntity {
 
     public function getWeight(): ?string {
         return $this->weight ?? null;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getVatAsMoney(): ?Money {
+        return $this->toMoney($this->vat ?? null);
+    }
+
+    public function getPriceGrossAsMoney(): ?Money {
+        return $this->toMoney($this->priceGross ?? null);
+    }
+
+    public function getPriceGrossAfterDiscountAsMoney(): ?Money {
+        return $this->toMoney($this->priceGrossAfterDiscount ?? null);
+    }
+
+    public function getPriceNetAsMoney(): ?Money {
+        return $this->toMoney($this->priceNet ?? null);
+    }
+
+    public function getPriceNetAfterDiscountAsMoney(): ?Money {
+        return $this->toMoney($this->priceNetAfterDiscount ?? null);
+    }
+
+    public function getTotalNetAsMoney(): ?Money {
+        return $this->toMoney($this->totalNet ?? null);
+    }
+
+    public function getTotalGrossAsMoney(): ?Money {
+        return $this->toMoney($this->totalGross ?? null);
+    }
+
+    public function getTotalGrossAfterDiscountAsMoney(): ?Money {
+        return $this->toMoney($this->totalGrossAfterDiscount ?? null);
     }
 }

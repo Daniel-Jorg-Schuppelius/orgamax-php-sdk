@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Invoices;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
+use DateTimeImmutable;
 use Orgamax\Enums\PaymentType;
 use Psr\Log\LoggerInterface;
 
@@ -22,6 +25,8 @@ use Psr\Log\LoggerInterface;
  * mit einem Typ-Fehler.
  */
 class InvoicePayment extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?int $id;
 
     protected ?float $amount;
@@ -70,5 +75,34 @@ class InvoicePayment extends NamedEntity {
      */
     public function setDate(?string $date): void {
         $this->date = $date;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getAmountAsMoney(): ?Money {
+        return $this->toMoney($this->amount ?? null);
+    }
+
+    /**
+     * Datumsfelder kommen als String ("YYYY-MM-DD" bzw. ISO-8601) von der
+     * API; die folgenden Accessoren geben sie typisiert zurück, ohne das
+     * Wire-Format der Property anzutasten.
+     */
+    protected static function toDateTime(?string $value): ?DateTimeImmutable {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    public function getDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->date ?? null);
     }
 }

@@ -13,12 +13,16 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Expenses;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use Psr\Log\LoggerInterface;
 
 /**
  * Position einer Ausgabe (positions-Feld) mit Buchhaltungskonto und Beträgen.
  */
 class ExpensePosition extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?int $id;
 
     protected ?float $bookkeepingAccountNo;
@@ -108,5 +112,21 @@ class ExpensePosition extends NamedEntity {
 
     public function setTotalGross(?float $totalGross): void {
         $this->totalGross = $totalGross;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getVatAsMoney(): ?Money {
+        return $this->toMoney($this->vat ?? null);
+    }
+
+    public function getTotalNetAsMoney(): ?Money {
+        return $this->toMoney($this->totalNet ?? null);
+    }
+
+    public function getTotalGrossAsMoney(): ?Money {
+        return $this->toMoney($this->totalGross ?? null);
     }
 }
