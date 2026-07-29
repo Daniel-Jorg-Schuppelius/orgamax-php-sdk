@@ -27,18 +27,32 @@ class AccountSettingEndpoint extends EndpointAbstract {
         self::logDebug('Fetching account settings', ['endpoint' => $this->endpoint]);
 
         return self::logDebugWithTimer(function (): ?AccountSetting {
-            $response = parent::getContents();
-            if (empty($response) || $response === '[]') {
-                return null;
-            }
+            $item = $this->raw();
 
-            $decoded = json_decode($response, true);
-            if (!is_array($decoded)) {
-                return null;
-            }
-            $item = array_is_list($decoded) ? ($decoded[0] ?? null) : $decoded;
-
-            return is_array($item) ? AccountSetting::fromArray($item, self::$logger) : null;
+            return $item === [] ? null : AccountSetting::fromArray($item, self::$logger);
         }, 'Account settings fetched');
+    }
+
+    /**
+     * Kontoeinstellungen unverändert als Array — für Felder, welche die Spec
+     * (und damit AccountSetting) nicht kennt. Leeres Array, wenn die API
+     * nichts liefert.
+     *
+     * @return array<string, mixed>
+     */
+    public function raw(): array {
+        $response = parent::getContents();
+        if (empty($response) || $response === '[]') {
+            return [];
+        }
+
+        $decoded = json_decode($response, true);
+        if (!is_array($decoded)) {
+            return [];
+        }
+        $item = array_is_list($decoded) ? ($decoded[0] ?? null) : $decoded;
+
+        /** @var array<string, mixed> */
+        return is_array($item) ? $item : [];
     }
 }

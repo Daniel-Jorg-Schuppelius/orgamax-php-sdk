@@ -14,6 +14,7 @@ namespace Orgamax\API;
 
 use APIToolkit\API\Authentication\{BasicAuthentication, BearerAuthentication};
 use APIToolkit\Contracts\Abstracts\API\ClientAbstract;
+use GuzzleHttp\Client as HttpClient;
 use Orgamax\API\Endpoints\AuthEndpoint;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -26,23 +27,30 @@ use Psr\Log\LoggerInterface;
  * aus der Callback-URL der Erweiterung) und liefern ein JWT, das als
  * Bearer-Token für alle weiteren Routen dient.
  *
- * Da Guzzle pfadbehaftete base_uri nicht zuverlässig auflöst, wird der
- * Basispfad /openapi hier selbst vorangestellt: Endpoints verwenden
- * API-relative Pfade (z. B. "article/{id}"); absolute URLs und gerootete
- * Pfade ("/...") passieren unverändert.
+ * Da Guzzle pfadbehaftete base_uri nicht zuverlässig auflöst, baut der Client
+ * die Ziel-URL selbst: Endpoints verwenden API-relative Pfade (z. B.
+ * "article/{id}"), daraus wird baseUrl + /openapi + Pfad. Absolute URLs
+ * passieren unverändert. Die vollständige URL macht den Client unabhängig von
+ * der base_uri eines injizierten Guzzle-Transports.
  */
 class Client extends ClientAbstract {
     public const DEFAULT_BASE_URL = 'https://api.orgamax.de';
 
     public const BASE_PATH = '/openapi';
 
+    /**
+     * @param HttpClient|null $httpClient Vorkonfigurierter Guzzle-Client — Naht
+     *                                    für Tests (MockHandler) und für
+     *                                    Anwendungen mit eigenem Transport.
+     */
     public function __construct(
         #[\SensitiveParameter] ?string $token,
         string $baseUrl = self::DEFAULT_BASE_URL,
         ?LoggerInterface $logger = null,
-        bool $sleepAfterRequest = false
+        bool $sleepAfterRequest = false,
+        ?HttpClient $httpClient = null
     ) {
-        parent::__construct($baseUrl, $logger, $sleepAfterRequest);
+        parent::__construct($baseUrl, $logger, $sleepAfterRequest, $httpClient);
 
         // Kein Default-Content-Type: Multipart-Uploads setzen ihren eigenen;
         // JSON-Requests nutzen die Guzzle-json-Option.
@@ -65,9 +73,10 @@ class Client extends ClientAbstract {
         #[\SensitiveParameter] string $apiSecret,
         string $baseUrl = self::DEFAULT_BASE_URL,
         ?LoggerInterface $logger = null,
-        bool $sleepAfterRequest = false
+        bool $sleepAfterRequest = false,
+        ?HttpClient $httpClient = null
     ): self {
-        $client = new self(null, $baseUrl, $logger, $sleepAfterRequest);
+        $client = new self(null, $baseUrl, $logger, $sleepAfterRequest, $httpClient);
         $client->setAuthentication(new BasicAuthentication($apiKey, $apiSecret));
 
         return $client;
@@ -83,24 +92,31 @@ class Client extends ClientAbstract {
         string $ownershipId,
         string $baseUrl = self::DEFAULT_BASE_URL,
         ?LoggerInterface $logger = null,
-        bool $sleepAfterRequest = false
+        bool $sleepAfterRequest = false,
+        ?HttpClient $httpClient = null
     ): self {
-        $authClient = self::forCredentials($apiKey, $apiSecret, $baseUrl, $logger, $sleepAfterRequest);
+        $authClient = self::forCredentials($apiKey, $apiSecret, $baseUrl, $logger, $sleepAfterRequest, $httpClient);
         $token = (new AuthEndpoint($authClient, $logger))->token($ownershipId);
 
-        return new self($token->getToken(), $baseUrl, $logger, $sleepAfterRequest);
+        return new self($token->getToken(), $baseUrl, $logger, $sleepAfterRequest, $httpClient);
     }
 
     /**
-     * Stellt API-relativen URIs den Basispfad /openapi voran.
-     * Absolute URLs (http/https) und gerootete Pfade ("/...") bleiben unverändert.
+     * Baut aus einem API-relativen URI die vollständige Ziel-URL
+     * (baseUrl + /openapi + Pfad). Absolute URLs (http/https) bleiben
+     * unverändert; ein gerooteter Pfad ("/...") wird nur an die baseUrl
+     * gehängt, trägt den Basispfad also selbst.
      */
     protected function prefixUri(string $uri): string {
-        if ($uri === '' || str_starts_with($uri, 'http://') || str_starts_with($uri, 'https://') || str_starts_with($uri, '/')) {
+        if ($uri === '' || str_starts_with($uri, 'http://') || str_starts_with($uri, 'https://')) {
             return $uri;
         }
 
-        return self::BASE_PATH . '/' . $uri;
+        if (str_starts_with($uri, '/')) {
+            return $this->getBaseUrl() . $uri;
+        }
+
+        return $this->getBaseUrl() . self::BASE_PATH . '/' . $uri;
     }
 
     /**

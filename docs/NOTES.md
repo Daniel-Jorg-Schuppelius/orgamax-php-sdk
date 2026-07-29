@@ -52,3 +52,18 @@ SDK-Design berücksichtigt wurden.
 - Enum-Werte in Antworten werden strikt hydratisiert (`BackedEnum::from`).
   Sollte die API undokumentierte Werte liefern (die Spec enthält Tippfehler
   wie `receject` in Filter-Namen), schlägt die Hydration bewusst laut fehl.
+
+## Felder außerhalb der Spec
+
+Die Entities bilden ausschließlich dokumentierte Felder ab; alles andere geht
+bei der Hydration verloren. Wo eine Anwendung auf undokumentierte Felder
+angewiesen ist (z. B. die freigeschalteten API-Zugriffe eines Mandanten),
+liefert `Settings\AccountSettingEndpoint::raw()` die Antwort unverändert als
+Array.
+
+## Transport
+
+`Client` akzeptiert als letzten Konstruktorparameter einen vorkonfigurierten
+Guzzle-Client (Tests mit `MockHandler`, Proxy, eigene Timeouts). Die Ziel-URL
+baut der Client vollständig selbst (`baseUrl` + `/openapi` + Pfad) — eine
+`base_uri` am injizierten Transport ist nicht nötig und wird nicht ausgewertet.

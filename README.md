@@ -48,6 +48,11 @@ $client = new Client($token);
 
 // Optional: eigener PSR-3-Logger und Request-Throttling
 $client = new Client($token, Client::DEFAULT_BASE_URL, $logger, true);
+
+// Optional: eigener Guzzle-Transport (Test-MockHandler, Proxy, Timeouts).
+// Die Ziel-URL baut der Client vollständig selbst — eine base_uri des
+// injizierten Clients ist nicht nötig.
+$client = new Client($token, Client::DEFAULT_BASE_URL, $logger, false, $guzzle);
 ```
 
 ## 📚 Verwendung

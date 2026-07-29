@@ -83,5 +83,18 @@ class AccountSettingEndpointOfflineTest extends OfflineEndpointTest {
         $this->mockClient->addResponse('GET', 'setting/account', 200, '[]');
 
         $this->assertNull($this->endpoint->get());
+        $this->assertSame([], $this->endpoint->raw());
+    }
+
+    public function test_raw_keeps_fields_the_spec_does_not_document(): void {
+        $this->mockClient->clearResponses();
+        $body = json_encode([['companyType' => 'GmbH', 'scopes' => ['customer:read', 'invoice:read']]]);
+        $this->assertNotFalse($body);
+        $this->mockClient->addResponse('GET', 'setting/account', 200, $body);
+
+        $raw = $this->endpoint->raw();
+
+        $this->assertSame('GmbH', $raw['companyType'] ?? null);
+        $this->assertSame(['customer:read', 'invoice:read'], $raw['scopes'] ?? null);
     }
 }
