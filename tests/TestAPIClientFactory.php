@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use APIToolkit\Testing\TestLoggerFactory;
 use ConfigToolkit\ConfigLoader;
-use ERRORToolkit\Factories\ConsoleLoggerFactory;
-use ERRORToolkit\LoggerRegistry;
 use Orgamax\API\Client;
 use Psr\Log\LoggerInterface;
 
@@ -30,12 +29,7 @@ class TestAPIClientFactory {
     private static ?LoggerInterface $logger = null;
 
     public static function getLogger(): LoggerInterface {
-        if (self::$logger === null) {
-            self::$logger = ConsoleLoggerFactory::getLogger();
-            LoggerRegistry::setLogger(self::$logger);
-        }
-
-        return self::$logger;
+        return self::$logger ??= TestLoggerFactory::get('ORGAMAX');
     }
 
     public static function getClient(): ?Client {

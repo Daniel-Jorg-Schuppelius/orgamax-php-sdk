@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Orgamax\Contracts\Interfaces\API;
 
-use APIToolkit\Contracts\Interfaces\API\EndpointInterface;
+use APIToolkit\Contracts\Interfaces\API\EndpointInterfaces\SearchableEndpointInterface as APIToolkitSearchableEndpointInterface;
 use Orgamax\Contracts\Abstracts\ListResponseAbstract;
 
 /**
  * Endpoint mit paginierter Listen-Route (offset, limit, orderBy, desc, search).
  */
-interface SearchableEndpointInterface extends EndpointInterface {
+interface SearchableEndpointInterface extends APIToolkitSearchableEndpointInterface {
     /**
      * @param array<string, mixed> $queryParams
      * @param array<string, mixed> $options
