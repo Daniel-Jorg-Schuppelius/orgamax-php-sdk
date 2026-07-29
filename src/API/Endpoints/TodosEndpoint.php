@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Orgamax\API\Endpoints;
 
-use APIToolkit\Contracts\Abstracts\API\EndpointAbstract;
 use APIToolkit\Entities\ID;
 use InvalidArgumentException;
+use Orgamax\Contracts\Abstracts\API\PagedEndpointAbstract;
 use Orgamax\Contracts\Interfaces\API\SearchableEndpointInterface;
 use Orgamax\Entities\Todos\{TodoList, TodoMessageList, TodoRelations, Todos};
 
@@ -23,7 +23,7 @@ use Orgamax\Entities\Todos\{TodoList, TodoMessageList, TodoRelations, Todos};
  * GET /todo/{id} liefert die Nachrichten des To-dos (nicht das To-do selbst),
  * und eine Nachricht wird per POST /todo/message/{id} GELÖSCHT.
  */
-class TodosEndpoint extends EndpointAbstract implements SearchableEndpointInterface {
+class TodosEndpoint extends PagedEndpointAbstract implements SearchableEndpointInterface {
     protected string $endpoint = 'todo';
 
     /**

@@ -14,6 +14,7 @@ namespace Orgamax\Entities\Todos;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
 use DateTime;
+use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -104,5 +105,34 @@ class Todo extends NamedEntity {
 
     public function getUpdatedAt(): ?DateTime {
         return $this->updatedAt ?? null;
+    }
+
+    /**
+     * Datumsfelder kommen als String ("YYYY-MM-DD" bzw. ISO-8601) von der
+     * API; die folgenden Accessoren geben sie typisiert zurück, ohne das
+     * Wire-Format der Property anzutasten.
+     */
+    protected static function toDateTime(?string $value): ?DateTimeImmutable {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    public function getDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->date ?? null);
+    }
+
+    public function getDueToDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->dueToDate ?? null);
+    }
+
+    public function getDoneAtAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->doneAt ?? null);
     }
 }

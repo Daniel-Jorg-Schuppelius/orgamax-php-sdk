@@ -13,12 +13,16 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Common;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use Psr\Log\LoggerInterface;
 
 /**
  * Meta-Daten einer Belegposition (Referenz auf den zugrundeliegenden Artikel).
  */
 class PositionMetaData extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?int $id;
 
     protected ?string $type;
@@ -54,5 +58,13 @@ class PositionMetaData extends NamedEntity {
 
     public function getCalculationBase(): ?string {
         return $this->calculationBase ?? null;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getPurchasePriceAsMoney(): ?Money {
+        return $this->toMoney($this->purchasePrice ?? null);
     }
 }

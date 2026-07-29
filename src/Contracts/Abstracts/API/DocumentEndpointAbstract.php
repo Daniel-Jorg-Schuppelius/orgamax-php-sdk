@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Orgamax\Contracts\Abstracts\API;
 
-use APIToolkit\Contracts\Abstracts\API\EndpointAbstract;
 use APIToolkit\Entities\ID;
 use Orgamax\Contracts\Interfaces\API\DocumentEndpointInterface;
 
@@ -20,7 +19,7 @@ use Orgamax\Contracts\Interfaces\API\DocumentEndpointInterface;
  * Gemeinsame Dokument-Logik für belegbasierte Endpoints (Invoice, Offer,
  * Order, DeliveryNote): GET {resource}/document/{id} liefert das PDF.
  */
-abstract class DocumentEndpointAbstract extends EndpointAbstract implements DocumentEndpointInterface {
+abstract class DocumentEndpointAbstract extends PagedEndpointAbstract implements DocumentEndpointInterface {
     public function document(ID $id, ?string $type = null, ?string $filename = null): string {
         self::logDebug('Fetching document', ['endpoint' => $this->endpoint, 'id' => $id->toString()]);
 

@@ -31,4 +31,11 @@ abstract class ListResponseAbstract extends NamedEntity {
      * @return NamedValues<NamedEntity>|null
      */
     abstract public function getData(): ?NamedValues;
+
+    /**
+     * Die Einträge der Liste — Grundlage der seitenweisen Iteration.
+     *
+     * @return array<int, mixed>
+     */
+    abstract public function getValues(): array;
 }

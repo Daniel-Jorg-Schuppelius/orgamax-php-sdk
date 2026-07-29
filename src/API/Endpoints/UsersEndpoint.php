@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Orgamax\API\Endpoints;
 
-use APIToolkit\Contracts\Abstracts\API\EndpointAbstract;
 use APIToolkit\Contracts\Interfaces\NamedEntityInterface;
 use APIToolkit\Entities\ID;
 use APIToolkit\Exceptions\NotAllowedException;
+use Orgamax\Contracts\Abstracts\API\PagedEndpointAbstract;
 use Orgamax\Contracts\Interfaces\API\SearchableEndpointInterface;
 use Orgamax\Entities\Users\UserList;
 
-class UsersEndpoint extends EndpointAbstract implements SearchableEndpointInterface {
+class UsersEndpoint extends PagedEndpointAbstract implements SearchableEndpointInterface {
     protected string $endpoint = 'user';
 
     public function get(?ID $id = null): ?NamedEntityInterface {
