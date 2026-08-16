@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Customers;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use Orgamax\Entities\Common\{Address, Addresses};
 use Orgamax\Enums\CustomerKind;
 use Psr\Log\LoggerInterface;
@@ -23,6 +25,8 @@ use Psr\Log\LoggerInterface;
  * billingAddress der customerDefaultAddress übertragen.
  */
 class Customer extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?string $id;
 
     protected ?string $name;
@@ -369,5 +373,17 @@ class Customer extends NamedEntity {
 
     public function setContactPersons(?ContactPersons $contactPersons): void {
         $this->contactPersons = $contactPersons;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getTotalSalesAsMoney(): ?Money {
+        return $this->toMoney($this->totalSales ?? null);
+    }
+
+    public function getBalanceAsMoney(): ?Money {
+        return $this->toMoney($this->balance ?? null);
     }
 }

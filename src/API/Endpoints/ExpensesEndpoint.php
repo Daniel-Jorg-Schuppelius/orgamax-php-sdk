@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Orgamax\API\Endpoints;
 
-use APIToolkit\Contracts\Abstracts\API\EndpointAbstract;
 use APIToolkit\Entities\ID;
 use InvalidArgumentException;
+use Orgamax\Contracts\Abstracts\API\PagedEndpointAbstract;
 use Orgamax\Contracts\Interfaces\API\SearchableEndpointInterface;
 use Orgamax\Entities\Common\ResourceResponse;
 use Orgamax\Entities\Expenses\{Expense, ExpenseList, ExpenseResponse};
 
-class ExpensesEndpoint extends EndpointAbstract implements SearchableEndpointInterface {
+class ExpensesEndpoint extends PagedEndpointAbstract implements SearchableEndpointInterface {
     protected string $endpoint = 'expense';
 
     public function create(Expense $data): ResourceResponse {

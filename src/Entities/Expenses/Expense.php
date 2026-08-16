@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Expenses;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
+use DateTimeImmutable;
 use Orgamax\Enums\PayKind;
 use Psr\Log\LoggerInterface;
 
@@ -21,6 +24,8 @@ use Psr\Log\LoggerInterface;
  * und Detail-Felder (ExpenseDataObject) der API.
  */
 class Expense extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?int $id;
 
     protected ?string $date;
@@ -207,5 +212,54 @@ class Expense extends NamedEntity {
 
     public function setPositions(?ExpensePositions $positions): void {
         $this->positions = $positions;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getPriceAsMoney(): ?Money {
+        return $this->toMoney($this->price ?? null);
+    }
+
+    public function getPriceTotalAsMoney(): ?Money {
+        return $this->toMoney($this->priceTotal ?? null);
+    }
+
+    public function getVatAsMoney(): ?Money {
+        return $this->toMoney($this->vat ?? null);
+    }
+
+    public function getVatAmountAsMoney(): ?Money {
+        return $this->toMoney($this->vatAmount ?? null);
+    }
+
+    public function getOutstandingAmountAsMoney(): ?Money {
+        return $this->toMoney($this->outstandingAmount ?? null);
+    }
+
+    /**
+     * Datumsfelder kommen als String ("YYYY-MM-DD" bzw. ISO-8601) von der
+     * API; die folgenden Accessoren geben sie typisiert zurück, ohne das
+     * Wire-Format der Property anzutasten.
+     */
+    protected static function toDateTime(?string $value): ?DateTimeImmutable {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    public function getDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->date ?? null);
+    }
+
+    public function getPayDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->payDate ?? null);
     }
 }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Articles;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use DateTime;
 use Orgamax\Enums\CalculationBase;
 use Psr\Log\LoggerInterface;
@@ -23,6 +25,8 @@ use Psr\Log\LoggerInterface;
  * title, unit und number sind beim Anlegen Pflicht.
  */
 class Article extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?int $id;
 
     protected ?string $number;
@@ -286,5 +290,29 @@ class Article extends NamedEntity {
 
     public function getImages(): ?ArticleImages {
         return $this->images ?? null;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getPriceAsMoney(): ?Money {
+        return $this->toMoney($this->price ?? null);
+    }
+
+    public function getPriceGrossAsMoney(): ?Money {
+        return $this->toMoney($this->priceGross ?? null);
+    }
+
+    public function getPurchasePriceAsMoney(): ?Money {
+        return $this->toMoney($this->purchasePrice ?? null);
+    }
+
+    public function getDifferentialTaxPriceAsMoney(): ?Money {
+        return $this->toMoney($this->differentialTaxPrice ?? null);
+    }
+
+    public function getTotalSalesAsMoney(): ?Money {
+        return $this->toMoney($this->totalSales ?? null);
     }
 }

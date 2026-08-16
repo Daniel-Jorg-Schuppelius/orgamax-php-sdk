@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Articles;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -20,6 +22,8 @@ use Psr\Log\LoggerInterface;
  * (je nach calculationBase des Artikels).
  */
 class GraduatedPrice extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?float $quantity;
 
     protected ?float $netUnitPrice;
@@ -55,5 +59,17 @@ class GraduatedPrice extends NamedEntity {
 
     public function setGrossUnitPrice(?float $grossUnitPrice): void {
         $this->grossUnitPrice = $grossUnitPrice;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getNetUnitPriceAsMoney(): ?Money {
+        return $this->toMoney($this->netUnitPrice ?? null);
+    }
+
+    public function getGrossUnitPriceAsMoney(): ?Money {
+        return $this->toMoney($this->grossUnitPrice ?? null);
     }
 }

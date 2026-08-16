@@ -13,7 +13,10 @@ declare(strict_types=1);
 namespace Orgamax\Entities\Offers;
 
 use APIToolkit\Contracts\Abstracts\NamedEntity;
+use APIToolkit\Traits\MoneyAccessorTrait;
+use CommonToolkit\ValueObjects\Money;
 use DateTime;
+use DateTimeImmutable;
 use Orgamax\Entities\Common\{CustomerData, Positions};
 use Orgamax\Entities\Settings\PayCondition;
 use Orgamax\Enums\{PriceKind, SalesDocumentState};
@@ -24,6 +27,8 @@ use Psr\Log\LoggerInterface;
  * (OfferDataObject) der API; die Ressource ist rein lesend.
  */
 class Offer extends NamedEntity {
+    use MoneyAccessorTrait;
+
     protected ?int $id;
 
     protected ?string $number;
@@ -161,5 +166,46 @@ class Offer extends NamedEntity {
 
     public function getCustomerData(): ?CustomerData {
         return $this->customerData ?? null;
+    }
+
+    /*
+     * Betragsfelder der API sind JSON-Zahlen; für exakte Rechnungen liefern
+     * die folgenden Accessoren sie als Money in der Belegwährung.
+     */
+    public function getTotalNetAsMoney(): ?Money {
+        return $this->toMoney($this->totalNet ?? null);
+    }
+
+    public function getTotalGrossAsMoney(): ?Money {
+        return $this->toMoney($this->totalGross ?? null);
+    }
+
+    public function getOutstandingAmountAsMoney(): ?Money {
+        return $this->toMoney($this->outstandingAmount ?? null);
+    }
+
+    public function getCashDiscountTotalAsMoney(): ?Money {
+        return $this->toMoney($this->cashDiscountTotal ?? null);
+    }
+
+    /**
+     * Datumsfelder kommen als String ("YYYY-MM-DD" bzw. ISO-8601) von der
+     * API; die folgenden Accessoren geben sie typisiert zurück, ohne das
+     * Wire-Format der Property anzutasten.
+     */
+    protected static function toDateTime(?string $value): ?DateTimeImmutable {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    public function getDateAsDateTime(): ?DateTimeImmutable {
+        return self::toDateTime($this->date ?? null);
     }
 }
