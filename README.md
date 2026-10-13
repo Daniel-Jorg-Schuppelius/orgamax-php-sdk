@@ -8,7 +8,7 @@ Ein modernes PHP-SDK für die [orgaMAX-API](https://api.orgamax.de/openapi/docum
 
 ## 🚀 Features
 
-- **Vollständige API-Abdeckung**: alle 70 Operationen der orgaMAX-OpenAPI-Spec (Artikel, Kunden, Lieferanten, Rechnungen, Angebote, Aufträge, Lieferscheine, Ausgaben, Dateien, To-dos, Tags, Benutzer, Kontenrahmen, Einstellungen)
+- **Vollständige API-Abdeckung**: alle 72 Operationen der orgaMAX-OpenAPI-Spec (Artikel, Kunden, Lieferanten, Rechnungen, Angebote, Aufträge, Lieferscheine, Ausgaben, Dateien, To-dos, Tags, Benutzer, Kontenrahmen, Einstellungen)
 - **Typisierte Entities** mit automatischer Reflection-Hydration (JSON ↔ Objekt) und Enums für dokumentierte Wertemengen
 - **Kompletter Auth-Flow**: `Client::fromCredentials()` erledigt Basic-Auth → Token-Bezug → Bearer-Client in einem Aufruf
 - **Robuster HTTP-Layer** aus dem Toolkit: Retry mit Backoff und `Retry-After`, Throttling, Statuscode-→-Exception-Mapping, Log-Redaction sensibler Daten
@@ -165,7 +165,7 @@ tests/
 | `CustomersEndpoint` | Create/Get/Update + Liste /customer | Kundenverwaltung |
 | `SuppliersEndpoint` | CRUD + Liste /supplier | Lieferantenverwaltung |
 | `InvoicesEndpoint` | /invoice: Get, Liste, Payment, Lock, Send, Document (PDF) | Rechnungen |
-| `OffersEndpoint` | /offer: Get, Liste, Document (PDF) | Angebote |
+| `OffersEndpoint` | /offer: Create, Update, Get, Liste, Document (PDF) | Angebote |
 | `OrdersEndpoint` | /order: Create, Get, Liste, Document, Order→Invoice | Aufträge |
 | `DeliveryNotesEndpoint` | /deliveryNote: Get, Liste, Document (PDF) | Lieferscheine |
 | `ExpensesEndpoint` | CRUD + Liste /expense, Receipt-Delete | Ausgaben |

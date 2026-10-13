@@ -80,6 +80,11 @@ class Offer extends NamedEntity {
         parent::__construct($data, $logger);
     }
 
+    /** Zum Anlegen braucht orgaMAX nur den Kunden (POST /offer/). */
+    public function isValid(): bool {
+        return parent::isValid() && isset($this->customerId);
+    }
+
     public function getId(): ?int {
         return $this->id ?? null;
     }

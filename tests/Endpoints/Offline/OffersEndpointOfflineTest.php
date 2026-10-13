@@ -146,4 +146,64 @@ class OffersEndpointOfflineTest extends OfflineEndpointTest {
         $this->assertSame('%PDF-1.4 mock-offer-document', $document);
         $this->assertRequestMade('GET', 'offer/document/15*');
     }
+
+    public function test_create_offer(): void {
+        $this->mockClient->addResponse('POST', 'offer/', 201, $this->json(['meta' => [], 'data' => ['id' => 21, 'number' => 'AN-2026-21', 'customerId' => 7, 'state' => 'open']]));
+
+        $result = $this->endpoint->create(new Offer([
+            'customerId' => 7,
+            'positions' => [[
+                'amount' => 2,
+                'title' => 'Beratung',
+                'description' => 'Vor Ort',
+                'showDescription' => true,
+                'unit' => 'Std.',
+                'priceNet' => 95,
+                'priceGross' => 113.05,
+                'vatPercent' => 19,
+                'discountPercent' => 0,
+                'metaData' => ['type' => 'custom'],
+            ]],
+        ]));
+
+        $this->assertInstanceOf(Offer::class, $result);
+        $this->assertSame('AN-2026-21', $result->getNumber());
+        $this->assertEquals(SalesDocumentState::OPEN, $result->getState());
+        $this->assertRequestMade('POST', 'offer/');
+        $payload = $this->getLastRequestJson();
+        $this->assertNotNull($payload);
+        $this->assertSame(7, $payload['customerId']);
+        $this->assertSame('Beratung', $payload['positions'][0]['title']);
+    }
+
+    public function test_create_offer_reads_an_unwrapped_answer(): void {
+        $this->mockClient->addResponse('POST', 'offer/', 201, $this->json(['id' => 22, 'number' => 'AN-2026-22', 'customerId' => 7]));
+
+        $result = $this->endpoint->create(new Offer(['customerId' => 7]));
+
+        $this->assertSame('AN-2026-22', $result?->getNumber());
+    }
+
+    public function test_create_invalid_offer_throws_exception(): void {
+        $this->expectException(InvalidArgumentException::class);
+        $this->endpoint->create(new Offer(['notes' => 'Ohne Kunde']));
+    }
+
+    public function test_update_offer(): void {
+        $this->mockClient->addResponse('PUT', 'offer/15', 200, $this->json(['meta' => [], 'data' => ['id' => 15, 'number' => 'AN-2021-15', 'customerId' => 7, 'notes' => 'Neu']]));
+
+        $result = $this->endpoint->update(new ID(15), new Offer(['notes' => 'Neu']));
+
+        $this->assertSame('Neu', $result?->getNotes());
+        $this->assertRequestMade('PUT', 'offer/15');
+        $this->assertSame(['notes' => 'Neu'], $this->getLastRequestJson());
+    }
+
+    /** @param array<string, mixed> $data */
+    private function json(array $data): string {
+        $json = json_encode($data);
+        $this->assertNotFalse($json);
+
+        return $json;
+    }
 }

@@ -37,6 +37,35 @@ class OffersEndpoint extends DocumentEndpointAbstract implements SearchableEndpo
         }, "Offer fetched (ID: {$id->toString()})");
     }
 
+    /**
+     * Legt ein Angebot an (POST /offer/). orgaMAX vergibt die Nummer aus den
+     * Angebotseinstellungen; das Angebot entsteht im Zustand `open`.
+     */
+    public function create(Offer $data): ?Offer {
+        if (!$data->isValid()) {
+            self::logErrorAndThrow(InvalidArgumentException::class, 'Offer data is not valid: customerId is required');
+        }
+        self::logDebug('Creating offer', ['endpoint' => $this->endpoint]);
+
+        return self::logInfoWithTimer(
+            fn (): ?Offer => $this->offerFrom(parent::postContents($data->toArray(), [], "{$this->getEndpointUrl()}/", [200, 201])),
+            'Offer created'
+        );
+    }
+
+    /**
+     * Ändert ein Angebot (PUT /offer/{id}). Gesendete Positionen ersetzen die
+     * ganze Liste; ein schon fakturiertes Angebot lehnt orgaMAX ab (LOCKED).
+     */
+    public function update(ID $id, Offer $data): ?Offer {
+        self::logDebug('Updating offer', ['id' => $id->toString()]);
+
+        return self::logInfoWithTimer(
+            fn (): ?Offer => $this->offerFrom(parent::putContents($data->toArray(), [], "{$this->getEndpointUrl()}/{$id->toString()}", 200)),
+            "Offer updated (ID: {$id->toString()})"
+        );
+    }
+
     public function search(array $queryParams = [], array $options = []): ?OfferList {
         self::logDebug('Searching offers', ['queryParams' => $queryParams]);
 
@@ -48,5 +77,15 @@ class OffersEndpoint extends DocumentEndpointAbstract implements SearchableEndpo
 
             return OfferList::fromJson($response, self::$logger);
         }, 'Offers search completed');
+    }
+
+    /** Die Spec nennt als Antwort das Angebot selbst; die übrigen Routen liefern es im {meta, data}-Envelope. */
+    private function offerFrom(string $response): ?Offer {
+        $decoded = json_decode($response, true);
+        if (!is_array($decoded) || $decoded === []) {
+            return null;
+        }
+
+        return (new OfferResponse(array_key_exists('data', $decoded) ? $decoded : ['data' => $decoded], self::$logger))->getData();
     }
 }

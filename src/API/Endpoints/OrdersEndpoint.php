@@ -30,8 +30,8 @@ class OrdersEndpoint extends DocumentEndpointAbstract implements SearchableEndpo
 
         return self::logInfoWithTimer(
             fn () => ResourceResponse::fromJson(
-                // Die Spec antwortet hier mit 200 (nicht 201).
-                parent::postContents($data->toArray(), [], "{$this->getEndpointUrl()}/", 200),
+                // Die Spec nannte bis 07/2026 200, die Live-Spec vom 12.10.2026 nennt 201.
+                parent::postContents($data->toArray(), [], "{$this->getEndpointUrl()}/", [200, 201]),
                 self::$logger
             ),
             'Order created'

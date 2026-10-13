@@ -34,8 +34,8 @@ class OrdersEndpointOfflineTest extends OfflineEndpointTest {
             'data' => ['id' => '77'],
         ]);
         $this->assertNotFalse($createBody);
-        // Die Spec antwortet auf POST order/ mit 200 (nicht 201).
-        $this->mockClient->addResponse('POST', 'order/', 200, $createBody);
+        // Live-Spec vom 12.10.2026: 201 (vorher dokumentiert: 200).
+        $this->mockClient->addResponse('POST', 'order/', 201, $createBody);
 
         $invoiceBody = json_encode([
             'meta' => [],
@@ -151,6 +151,16 @@ class OrdersEndpointOfflineTest extends OfflineEndpointTest {
         $this->assertCount(1, $payload['positions']);
         $this->assertSame('Custom Article', $payload['positions'][0]['title']);
         $this->assertArrayNotHasKey('id', $payload);
+    }
+
+    public function test_create_order_also_accepts_200(): void {
+        $body = json_encode(['meta' => [], 'data' => ['id' => '78']]);
+        $this->assertNotFalse($body);
+        $this->mockClient->addResponse('POST', 'order/', 200, $body);
+
+        $result = $this->endpoint->create(new Order(['customerId' => 1]));
+
+        $this->assertEquals('78', $result->getData()?->getId());
     }
 
     public function test_create_invalid_order_throws_exception(): void {

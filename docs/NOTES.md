@@ -2,8 +2,8 @@
 
 Dokumentierte Abweichungen und Eigenheiten der offiziellen OpenAPI-Spec
 (https://api.orgamax.de/openapi/documentation/, Kopie unter
-[docs/OpenAPI/orgamax-openapi.json](OpenAPI/orgamax-openapi.json)), die beim
-SDK-Design berücksichtigt wurden.
+[docs/OpenAPI/orgamax-openapi.json](OpenAPI/orgamax-openapi.json), Stand
+12.10.2026), die beim SDK-Design berücksichtigt wurden.
 
 ## Authentifizierung
 
@@ -31,10 +31,17 @@ SDK-Design berücksichtigt wurden.
 ## Inkonsistenzen der Spec
 
 - **Statuscodes** variieren ohne erkennbares System: Create liefert je nach
-  Ressource 200 (`expense`, `order`, `todo`, Settings) oder 201 (`article`,
-  `customer`, `supplier`, `file/upload`); Update liefert 200 oder 204
+  Ressource 200 (`expense`, `todo`, Settings) oder 201 (`article`,
+  `customer`, `supplier`, `file/upload`, `offer`); Update liefert 200 oder 204
   (`PUT /expense/{id}`, `PUT /setting/deliveryCondition/{id}`). Das SDK
-  erwartet je Operation exakt den dokumentierten Code.
+  erwartet je Operation den dokumentierten Code. Ausnahme `POST /order/`: bis
+  07/2026 dokumentiert mit 200, seit der Spec vom 12.10.2026 mit 201 — das SDK
+  nimmt beide an; ebenso `POST /offer/`.
+- `POST /offer/` antwortet laut Spec mit dem Angebot selbst (`OfferData`),
+  die übrigen Routen im `{meta, data}`-Envelope. Das SDK liest beide Formen.
+- `PUT /customer/{id}` (Spec vom 12.10.2026): Nur gesendete Felder ändern sich.
+  `customerDefaultAddress` ersetzt die gespeicherte Adresse ganz — beide
+  Adressen mit `id` senden; ohne `id` entsteht eine neue, leere Adresse.
 - **Trailing Slashes** sind uneinheitlich (`POST /article/` mit,
   `POST /supplier` ohne). Das SDK folgt der Spec buchstabengetreu.
 - `PUT /setting/payCondition/` trägt die ID **im Body**, nicht im Pfad.
