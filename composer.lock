@@ -118,20 +118,20 @@
         },
         {
             "name": "dschuppelius/php-common-toolkit",
-            "version": "v2.8.0",
+            "version": "v2.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DSchuppelius/php-common-toolkit.git",
-                "reference": "32a6354f5941c3268f928cccc0c88cd71bcf80d4"
+                "reference": "c3b5602322061e40c3d921647eea440e9f752490"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DSchuppelius/php-common-toolkit/zipball/32a6354f5941c3268f928cccc0c88cd71bcf80d4",
-                "reference": "32a6354f5941c3268f928cccc0c88cd71bcf80d4",
+                "url": "https://api.github.com/repos/DSchuppelius/php-common-toolkit/zipball/c3b5602322061e40c3d921647eea440e9f752490",
+                "reference": "c3b5602322061e40c3d921647eea440e9f752490",
                 "shasum": ""
             },
             "require": {
-                "dschuppelius/php-config-toolkit": "^0.5",
+                "dschuppelius/php-config-toolkit": "^0.5.11",
                 "ext-bcmath": "*",
                 "ext-dom": "*",
                 "ext-intl": "*",
@@ -169,24 +169,24 @@
                 "issues": "https://github.com/DSchuppelius/php-common-toolkit/issues",
                 "source": "https://github.com/DSchuppelius/php-common-toolkit"
             },
-            "time": "2026-10-12T11:42:27+00:00"
+            "time": "2026-10-14T09:01:46+00:00"
         },
         {
             "name": "dschuppelius/php-config-toolkit",
-            "version": "v0.5.10",
+            "version": "v0.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DSchuppelius/php-config-toolkit.git",
-                "reference": "405236ec4135ea577b7910244ae9ab6b9f9e4e81"
+                "reference": "47b1ae4626f3057f89624bc91851669495d4d3a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DSchuppelius/php-config-toolkit/zipball/405236ec4135ea577b7910244ae9ab6b9f9e4e81",
-                "reference": "405236ec4135ea577b7910244ae9ab6b9f9e4e81",
+                "url": "https://api.github.com/repos/DSchuppelius/php-config-toolkit/zipball/47b1ae4626f3057f89624bc91851669495d4d3a6",
+                "reference": "47b1ae4626f3057f89624bc91851669495d4d3a6",
                 "shasum": ""
             },
             "require": {
-                "dschuppelius/php-error-toolkit": "^2.1",
+                "dschuppelius/php-error-toolkit": "^2.8.1",
                 "php": ">=8.0 <8.6"
             },
             "require-dev": {
@@ -218,20 +218,20 @@
                 "issues": "https://github.com/DSchuppelius/php-config-toolkit/issues",
                 "source": "https://github.com/DSchuppelius/php-config-toolkit"
             },
-            "time": "2026-09-25T12:33:25+00:00"
+            "time": "2026-10-14T07:26:12+00:00"
         },
         {
             "name": "dschuppelius/php-error-toolkit",
-            "version": "v2.7.3",
+            "version": "v2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DSchuppelius/php-error-toolkit.git",
-                "reference": "c0e815416a986fa73ea2ed99c74704420b84f484"
+                "reference": "1dcb61b193ba35a4bfe910022f32b770b0e99ae7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DSchuppelius/php-error-toolkit/zipball/c0e815416a986fa73ea2ed99c74704420b84f484",
-                "reference": "c0e815416a986fa73ea2ed99c74704420b84f484",
+                "url": "https://api.github.com/repos/DSchuppelius/php-error-toolkit/zipball/1dcb61b193ba35a4bfe910022f32b770b0e99ae7",
+                "reference": "1dcb61b193ba35a4bfe910022f32b770b0e99ae7",
                 "shasum": ""
             },
             "require": {
@@ -269,15 +269,18 @@
             "authors": [
                 {
                     "name": "Daniel Joerg Schuppelius",
-                    "email": "info@schuppelius.org"
+                    "email": "info@schuppelius.org",
+                    "homepage": "https://schuppelius.org",
+                    "role": "Developer"
                 }
             ],
             "description": "Logging and error handling foundation for the Schuppelius PHP toolkits (PSR-3 loggers, global error handler, LoggerRegistry, Laravel bridge)",
+            "homepage": "https://github.com/DSchuppelius/php-error-toolkit",
             "support": {
                 "issues": "https://github.com/DSchuppelius/php-error-toolkit/issues",
-                "source": "https://github.com/DSchuppelius/php-error-toolkit/tree/v2.7.3"
+                "source": "https://github.com/DSchuppelius/php-error-toolkit"
             },
-            "time": "2026-09-16T08:41:01+00:00"
+            "time": "2026-10-14T09:34:35+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1253,16 +1256,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v7.4.19",
+            "version": "v7.4.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "ed0ae095b86994d370d5791612e55984f15aa30e"
+                "reference": "e5247f4a5e0797d232ad8e8e6803aeb341843c83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/ed0ae095b86994d370d5791612e55984f15aa30e",
-                "reference": "ed0ae095b86994d370d5791612e55984f15aa30e",
+                "url": "https://api.github.com/repos/symfony/process/zipball/e5247f4a5e0797d232ad8e8e6803aeb341843c83",
+                "reference": "e5247f4a5e0797d232ad8e8e6803aeb341843c83",
                 "shasum": ""
             },
             "require": {
@@ -1294,7 +1297,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v7.4.19"
+                "source": "https://github.com/symfony/process/tree/v7.4.21"
             },
             "funding": [
                 {
@@ -1314,7 +1317,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-02T12:38:34+00:00"
+            "time": "2026-10-08T16:56:12+00:00"
         }
     ],
     "packages-dev": [
